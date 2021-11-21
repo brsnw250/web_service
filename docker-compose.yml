@@ -18,6 +18,20 @@ services:
       image: cassandra:latest
       depends_on:
         - cassandra
+      restart: on-failure
       volumes:
-        - ./src/main/resources/cassandra_schema.cql:/schema.cql
-      command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
+        - ./server/cassandra_schema.cql:/schema.cql
+      command: /bin/bash -c "sleep 30 && echo loading cassandra keyspace && cqlsh cassandra -f /schema.cql"
+
+  server:
+    container_name: image_server
+    build: .
+    depends_on:
+      - cassandra
+    restart: on-failure
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./serv_vol:/serv_vol
+    environment:
+      CASSANDRA_HOST: "cassandra"

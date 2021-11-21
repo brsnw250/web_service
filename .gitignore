@@ -1,4 +1,7 @@
 .idea/
 venv/
-src/
+*/__pycache__
 out/
+serv_vol
+*.zip
+.cifar10cache

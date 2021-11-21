@@ -1,0 +1,4 @@
+requests~=2.26.0
+Werkzeug~=2.0.2
+json-rpc~=1.13.0
+cassandra-driver~=3.25.0
