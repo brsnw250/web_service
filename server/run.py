@@ -1,38 +1,34 @@
-import os
-import time
 from argparse import ArgumentParser
 
-from werkzeug.wrappers import Request, Response
-from werkzeug.serving import run_simple
-from werkzeug.exceptions import NotFound
+from typing import List, Optional
 
-from jsonrpc import JSONRPCResponseManager, dispatcher
+from flask import Flask
+from flask_jsonrpc import JSONRPC
 
 from cas_ops import get_categories, get_random_category, get_random_image
 
 
-@dispatcher.add_method
-def listCategories():
+app = Flask("image-server")
+
+jrpc = JSONRPC(app, "/api", enable_web_browsable_api=True)
+
+
+@jrpc.method("listCategories")
+def list_categories() -> List[str]:
     return get_categories()
 
 
-@dispatcher.add_method
-def upload(category, image_bs64):
-    raise NotFound()
+# @jrpc.method("upload")
+# def upload(category, image_bs64):
+#     raise NotImplementedError()
 
 
-@dispatcher.add_method
-def download(category_id=None):
+@jrpc.method("download")
+def download(category_id: Optional[str] = None) -> List[str]:
     if category_id is None:
         category_id = get_random_category()
-    return category_id, get_random_image(category_id)
 
-
-@Request.application
-def application(request):
-    response = JSONRPCResponseManager.handle(
-        request.data, dispatcher)
-    return Response(response.json, mimetype='application/json')
+    return [category_id, get_random_image(category_id)]
 
 
 if __name__ == '__main__':
@@ -43,4 +39,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    run_simple(args.host, int(args.port), application)
+    app.run(args.host, int(args.port), debug=True)
