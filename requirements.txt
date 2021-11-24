@@ -2,3 +2,4 @@ requests~=2.26.0
 cassandra-driver~=3.25.0
 Flask~=2.0.2
 Flask-JSONRPC~=2.0.0
+uWSGI

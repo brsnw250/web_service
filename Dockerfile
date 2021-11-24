@@ -7,4 +7,8 @@ COPY server/cas_ops.py cas_ops.py
 
 ENV CONSISTENCY_LEVEL LOCAL_ONE
 ENV SERIAL_CONSISTENCY_LEVEL LOCAL_SERIAL
-CMD ["python3", "run.py", "--host", "0.0.0.0", "--port", "4000"]
+CMD ["uwsgi",\
+         "--http", "0.0.0.0:4000",\
+         "--threads", "5",\
+         "--manage-script-name",\
+         "--mount", "/=run:app"]
